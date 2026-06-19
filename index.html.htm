@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تحدي موقع ومظاهر سطح قارتي آسيا وأوروبا - أ. سعيد شعبان</title>
+    <style>
+        :root { --primary: #1e3a8a; --accent: #d4af37; --success: #059669; --danger: #dc2626; --bg: #f0f4f8; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #cbd5e1; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; padding: 15px; }
+        .stages-nav { display: flex; width: 100%; max-width: 900px; background: white; border-radius: 15px; margin-bottom: 15px; border: 3px solid var(--primary); overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .stage-item { flex: 1; padding: 15px 5px; font-size: 13px; font-weight: bold; text-align: center; color: #475569; border-left: 1px solid #e2e8f0; transition: all 0.4s ease; }
+        .stage-item.current { background: var(--accent); color: #1e3a8a; }
+        .stage-item.done { background: var(--primary); color: white; opacity: 0.9; }
+        .main-card { width: 100%; max-width: 900px; background: white; border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 4px solid var(--primary); overflow: hidden; position: relative; }
+        .top-nav-bar { background: linear-gradient(135deg, var(--primary), #1e40af); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--accent); }
+        .section-label { font-size: 24px; font-weight: 900; margin: 0; }
+        .content { padding: 40px; text-align: center; min-height: 450px; }
+        .teacher-img { width: 120px; height: 120px; border-radius: 50%; border: 5px solid var(--accent); object-fit: cover; }
+        .intro-name { font-size: 26px; font-weight: 900; color: var(--primary); margin: 5px 0; }
+        .q-card { background: var(--bg); border-radius: 25px; padding: 35px; margin-bottom: 30px; border: 2px dashed var(--primary); min-height: 160px; display: flex; align-items: center; justify-content: center; }
+        .q-text { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1.7; }
+        .btn-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media(min-width: 600px) { .btn-grid { grid-template-columns: 1fr 1fr; } }
+        .btn-opt { background: white; border: 3px solid #e2e8f0; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; color: var(--primary); text-align: right; }
+        .btn-opt:hover { border-color: var(--accent); background: #f8fafc; }
+        .correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
+        .wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
+        input { width: 100%; max-width: 450px; padding: 18px; border-radius: 15px; border: 3px solid #cbd5e1; text-align: center; font-size: 22px; margin-bottom: 25px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-main { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 20px 70px; border-radius: 20px; font-size: 26px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { transform: scale(1.05); }
+        .footer-identity { background: #f8fafc; padding: 15px; border-top: 3px solid var(--accent); color: var(--primary); font-weight: 800; font-size: 18px; display: flex; justify-content: center; align-items: center; gap: 20px; }
+        .screen { display: none; }
+        .active-screen { display: block; }
+        #feedback { display: none; margin-top: 20px; padding: 15px; border-radius: 15px; font-weight: bold; background: #ecfdf5; color: #065f46; font-size: 18px; border-right: 8px solid var(--success); text-align: right; }
+    </style>
+</head>
+<body>
+
+    <div class="stages-nav" id="stagesNav" style="display:none;">
+        <div class="stage-item">صواب وخطأ</div>
+        <div class="stage-item">بم تفسر؟</div>
+        <div class="stage-item">ما النتائج؟</div>
+        <div class="stage-item">ما المقصود؟</div>
+        <div class="stage-item">أكمل الفراغ</div>
+    </div>
+
+    <audio id="sCor" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
+    <audio id="sErr" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+    <audio id="vCor" src="https://archive.org/download/correct_202604/correct.mp3" preload="auto"></audio>
+    <audio id="vErr" src="https://archive.org/download/correct_202604/wrong.mp3" preload="auto"></audio>
+
+    <div class="main-card">
+        <div class="top-nav-bar"><p class="section-label">تحدي جغرافيا قارتي آسيا وأوروبا 🌍</p></div>
+        <div class="content">
+            <div id="scr-1" class="screen active-screen">
+                <img src="https://i.ibb.co/gKFwNMZ/image.png" class="teacher-img">
+                <p class="intro-name">أ. سعيد شعبان</p>
+                <input type="text" id="uName" placeholder="أدخل اسمك الثلاثي المعتمد...">
+                <button id="startBtn" class="btn-main">ابدأ التحدي الآن 🏆</button>
+            </div>
+            <div id="scr-2" class="screen">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; color: var(--primary); font-size: 20px;">
+                    <div id="q-count">السؤال: 1 / 50</div>
+                    <div id="s-val">النقاط: 0</div>
+                </div>
+                <div class="q-card"><div id="qText" class="q-text"></div></div>
+                <div id="feedback"></div>
+                <div class="btn-grid" id="options"></div>
+            </div>
+            <div id="scr-3" class="screen">
+                <h2 style="color: var(--accent); font-size: 35px;">تم التحدي بنجاح!</h2>
+                <div id="fName" style="font-size:26px; font-weight:bold;"></div>
+                <div id="fScore" style="font-size:80px; font-weight:900; color:var(--primary); margin: 20px 0;"></div>
+                <div id="motivationMsg"></div>
+                <p id="sendingMsg" style="color:var(--primary); font-weight:bold;">جاري حفظ النتيجة في لوحة الشرف...</p>
+                <button class="btn-main" onclick="location.reload()">مرة أخرى 🔄</button>
+            </div>
+        </div>
+        <div class="footer-identity"><span>إعداد وتصميم: أ. سعيد شعبان</span> | <span>📞 01551625493</span></div>
+    </div>
+
+<script>
+let score = 0, cur = 0, uName = "", startTime;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYnfNGajC14O8YDBVStJylmj-E6azdRUrigPdivddLXjQrb8dKJSK53_rEonzZh-wM8w/exec";
+const sCor = document.getElementById('sCor'), sErr = document.getElementById('sErr'), vCor = document.getElementById('vCor'), vErr = document.getElementById('vErr');
+const stageBoundaries = [11, 22, 33, 38, 50]; 
+const quiz = [
+    {q: "تعتبر قارة آسيا أكبر قارات العالم من حيث المساحة.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تقع قارة أوروبا بالكامل في النصف الجنوبي من الكرة الأرضية.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، تقع في النصف الشمالي"},
+    {q: "تفصل جبال أورال قارة آسيا عن قارة أوروبا من جهة الغرب.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تُعرف هضبة الدكن بلقب 'سقف العالم' لارتفاعها الشاهق.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، هي هضبة التبت"},
+    {q: "تتميز سواحل قارة أوروبا بالتعرج وكثرة الجزر مما سهل إنشاء الموانئ.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تعتبر قارة آسيا مهد الديانات السماوية الثلاث.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تقع جبال البرانس في شبه جزيرة البلقان بقارة أوروبا.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، تقع شمال إسبانيا"},
+    {q: "أنهار سيبيريا تتجمد في فصل الشتاء وتفقد قيمتها الملاحية.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "يصب نهر الفولجا (أطول أنهار أوروبا) في بحر قزوين.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تقترب قارة آسيا من قارة أمريكا الشمالية عند مضيق بيرنج.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تمر الدائرة القطبية الشمالية في الأطراف الشمالية لقارتي آسيا وأوروبا.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "يُطلق على قارتي آسيا وأوروبا مصطلح 'أوراسيا' بسبب:", opts: ["كبر المساحة", "اتصالهما جغرافياً ككتلة واحدة", "كثرة السكان", "تشابه المناخ"], ans: 1, fb: "بسبب اتصالهما جغرافياً ككتلة واحدة"},
+    {q: "تسمية هضبة التبت بـ 'سقف العالم' يرجع إلى:", opts: ["اتساع مساحتها", "ارتفاعها عن قمم الجبال المجاورة", "شدة برودتها", "ندرة سكانها"], ans: 1, fb: "بسبب ارتفاعها عن قمم الجبال المجاورة"},
+    {q: "فقدان أنهار سيبيريا أهميتها الاقتصادية شتاءً بسبب:", opts: ["جفاف مياهها", "سرعة جريانها", "تجمد مياهها", "تلوث مياهها"], ans: 2, fb: "بسبب تجمد مياهها"},
+    {q: "كثرة الموانئ الطبيعية في قارة أوروبا ترجع إلى:", opts: ["استقامة سواحلها", "تعرج سواحلها وكثرة جزرها", "ضيق مساحتها", "دفء مناخها"], ans: 1, fb: "بسبب تعرج سواحلها وكثرة جزرها"},
+    {q: "تنوع المناخ والنبات الطبيعي في قارة آسيا بسبب:", opts: ["شكلها المستطيل", "مساحتها الشاسعة وامتدادها الفلكي", "إحاطتها بالمحيطات", "قلة جبالها"], ans: 1, fb: "بسبب مساحتها الشاسعة وامتدادها الفلكي"},
+    {q: "تعتبر قارة آسيا 'شبه جزيرة كبيرة' لأن:", opts: ["الجبال تحيط بها", "اليابس يحيط بها", "المياه تحيط بها من 3 جهات", "تكثر بها الغابات"], ans: 2, fb: "لأن المياه تحيط بها من 3 جهات"},
+    {q: "ضيق السهول الساحلية في شرق قارة آسيا بسبب:", opts: ["كثرة الأنهار", "اقتراب الجبال من السواحل", "شدة البرودة", "قلة الأمطار"], ans: 1, fb: "بسبب اقتراب الجبال من السواحل"},
+    {q: "الأهمية الاستراتيجية الكبيرة لموقع قارة آسيا ترجع لـ:", opts: ["كثرة جبالها", "إشرافها على ممرات ملاحية هامة", "تجمد أنهارها", "اتساع سهولها"], ans: 1, fb: "بسبب إشرافها على ممرات ملاحية هامة"},
+    {q: "سهولة اتصال أوروبا بالعالم الخارجي ترجع إلى:", opts: ["موقعها على المحيط الهادي", "تعرج سواحلها وكثرة موانئها", "ارتفاع جبالها", "قلة أنهارها"], ans: 1, fb: "بسبب تعرج سواحلها وكثرة موانئها"},
+    {q: "تعدد مسميات جبال الألب في أوروبا يرجع إلى:", opts: ["اختلاف ارتفاعها", "اختلاف مسمياتها من دولة لأخرى", "كثرة أنهار بها", "تجمد قممها"], ans: 1, fb: "بسبب اختلاف مسمياتها من دولة لأخرى"},
+    {q: "اختفاء نظام الصحاري الحارة من قارة أوروبا بسبب:", opts: ["ضيق مساحتها", "موقعها الفلكي في المنطقة المعتدلة والباردة", "كثرة الجبال", "كثرة الأمطار الصيفية"], ans: 1, fb: "بسبب موقعها الفلكي"},
+    {q: "كثرة تعاريج السواحل والجزر في قارة أوروبا أدت لـ:", opts: ["قلة السكان", "إنشاء الموانئ الطبيعية", "صعوبة الصيد", "اعتدال الحرارة"], ans: 1, fb: "أدت لإنشاء الموانئ الطبيعية"},
+    {q: "الارتفاع الشاهق لهضبة التبت وسط آسيا أدى لـ:", opts: ["تسميتها بسقف العالم", "نمو الغابات بها", "تجمد أنهارها", "كثرة براكينها"], ans: 0, fb: "أدت لتسميتها بسقف العالم"},
+    {q: "تجمد مياه أنهار أوب وينسي ولينا في الشتاء أدى لـ:", opts: ["زيادة صيد الأسماك", "فقدان أهميتها الملاحية والاقتصادية", "زيادة التجارة", "نمو المحاصيل"], ans: 1, fb: "أدى لفقدان أهميتها الملاحية"},
+    {q: "امتداد قارة آسيا في 91 دائرة عرض أدى لـ:", opts: ["قلة الأمطار", "تنوع الأقاليم المناخية والنباتية", "استواء السطح", "صغر المساحة"], ans: 1, fb: "أدى لتنوع الأقاليم"},
+    {q: "رواسب الأنهار في السهل الأوروبي العظيم أدت لـ:", opts: ["تكوين تربة طينية خصبة", "تكوين جبال عالية", "جفاف الأرض", "ندرة العمران"], ans: 0, fb: "أدت لتكوين تربة طينية خصبة"},
+    {q: "اقتراب الجبال من سواحل المحيط الهادي بآسيا أدى لـ:", opts: ["اتساع السهول", "ضيق السهول الساحلية", "كثرة الموانئ", "سهولة الزراعة"], ans: 1, fb: "أدى لضيق السهول الساحلية"},
+    {q: "وقوع معظم قارة أوروبا في المنطقة المعتدلة والباردة أدى لـ:", opts: ["سيادة المناخ الصحراوي", "اعتدال المناخ في معظم أجزائها", "شدة الحرارة صيفاً", "ندرة الأمطار"], ans: 1, fb: "أدى لاعتدال المناخ"},
+    {q: "وجود المقدسات في آسيا أدى لـ:", opts: ["أهمية اقتصادية", "مكانة دينية عالمية كبرى", "أهمية عسكرية", "جفاف المناخ"], ans: 1, fb: "أدى لمكانة دينية عالمية"},
+    {q: "مرور الدائرة القطبية الشمالية شمال آسيا وأوروبا أدى لـ:", opts: ["انتشار الغابات المدارية", "شدة البرودة وتجمد الأطراف الشمالية", "كثرة السكان", "نمو المحاصيل"], ans: 1, fb: "أدى لشدة البرودة"},
+    {q: "كثرة الجزر القريبة من سواحل قارة آسيا أدت لـ:", opts: ["ندرة السكان", "ظهور الدول الجزرية (الأرخبيل)", "استقامة الساحل", "قلة الأمطار"], ans: 1, fb: "أدت لظهور الدول الجزرية"},
+    {q: "اتساع مساحة قارة آسيا بشكل كبير جداً أدى لـ:", opts: ["قلة الموارد", "تنوع مظاهر السطح والمناخ بها", "سهولة السفر", "استقامة السواحل"], ans: 1, fb: "أدى لتنوع مظاهر السطح"},
+    {q: "اليابس المتصل لقارتي آسيا وأوروبا معاً يسمى:", opts: ["أفريقيا", "أوراسيا", "الأرخبيل", "الدول الجزرية"], ans: 1, fb: "يسمى أوراسيا"},
+    {q: "مجموعة من الجزر المتقاربة في منطقة مائية واحدة:", opts: ["المضيق", "الأرخبيل", "الهضبة", "السهل"], ans: 1, fb: "يسمى الأرخبيل"},
+    {q: "الدول التي تتكون من جزيرة أو أكثر:", opts: ["دول حبيسة", "دول جزرية", "دول داخلية", "دول فيضية"], ans: 1, fb: "تسمى دول جزرية"},
+    {q: "لقب يُطلق على هضبة التبت لارتفاعها الشاهق:", opts: ["سقف الأرض", "سقف العالم", "قمة العالم", "جبل الثلج"], ans: 1, fb: "سقف العالم"},
+    {q: "ممر مائي ضيق يصل بين مسطحين مائيين:", opts: ["النهر", "المضيق", "الخليج", "البحيرة"], ans: 1, fb: "يسمى المضيق"},
+    {q: "تفصل جبال ........ قارة آسيا عن قارة أوروبا:", opts: ["الهيمالايا", "أورال", "الأنديز", "الأطلس"], ans: 1, fb: "جبال أورال"},
+    {q: "أطول أنهار قارة أوروبا هو نهر ........:", opts: ["الدانوب", "الراين", "الفولجا", "السين"], ans: 2, fb: "نهر الفولجا"},
+    {q: "تقع هضبة المزيتة في دولة ........:", opts: ["فرنسا", "إسبانيا", "ألمانيا", "إيطاليا"], ans: 1, fb: "إسبانيا"},
+    {q: "أعلى قمة جبلية في العالم هي قمة ........:", opts: ["مون بلان", "كليمنجارو", "إفرست", "كينيا"], ans: 2, fb: "قمة إفرست"},
+    {q: "تقترب قارة آسيا من قارة أفريقيا عند مضيق ........:", opts: ["هرمز", "جبل طارق", "باب المندب", "ملقا"], ans: 2, fb: "مضيق باب المندب"},
+    {q: "يحد قارة آسيا من جهة الشرق المحيط ........:", opts: ["الأطلنطي", "الهندي", "الهادي", "القطبي"], ans: 2, fb: "المحيط الهادي"},
+    {q: "تُعرف جبال الألب في شبه جزيرة البلقان باسم ........:", opts: ["البرانس", "الألب الدينارية", "زاغروس", "طوروس"], ans: 1, fb: "الألب الدينارية"},
+    {q: "تقع هضبة ........ في جنوب قارة آسيا (بالهند):", opts: ["التبت", "المزيتة", "الدكن", "شبه الجزيرة العربية"], ans: 2, fb: "هضبة الدكن"},
+    {q: "يمتد السهل الأوروبي العظيم من المحيط الأطلنطي غرباً حتى جبال ........ شرقاً:", opts: ["الهيمالايا", "أورال", "الألب", "الشام"], ans: 1, fb: "جبال أورال"},
+    {q: "أكبر بحر مغلق في العالم ويقع بآسيا هو بحر ........:", opts: ["الأحمر", "المتوسط", "قزوين", "الأسود"], ans: 2, fb: "بحر قزوين"},
+    {q: "تعتبر قارة ........ سادس قارات العالم من حيث المساحة:", opts: ["آسيا", "أفريقيا", "أوروبا", "أستراليا"], ans: 2, fb: "قارة أوروبا"},
+    {q: "تمر ........ في الأطراف الشمالية لقارة آسيا:", opts: ["دائرة الاستواء", "مدار السرطان", "مدار الجدي", "الدائرة القطبية الشمالية"], ans: 3, fb: "الدائرة القطبية الشمالية"}
+];
+
+document.getElementById('startBtn').onclick = function() {
+    uName = document.getElementById('uName').value;
+    if(uName.trim().length < 5) return alert("يرجى كتابة الاسم الثلاثي المعتمد للمشاركة في لوحة الشرف");
+    startTime = Date.now();
+    document.getElementById('scr-1').classList.remove('active-screen');
+    document.getElementById('scr-2').classList.add('active-screen');
+    document.getElementById('stagesNav').style.display = 'flex'; 
+    loadQ();
+};
+
+function loadQ() {
+    const q = quiz[cur];
+    document.getElementById('qText').innerText = q.q;
+    document.getElementById('q-count').innerText = "السؤال: " + (cur+1) + " / " + quiz.length;
+    document.getElementById('feedback').style.display = 'none';
+    let currentStageIdx = stageBoundaries.findIndex(limit => cur < limit);
+    document.querySelectorAll('.stage-item').forEach((item, idx) => {
+        item.classList.remove('current', 'done');
+        if (idx === currentStageIdx) item.classList.add('current');
+        else if (idx < currentStageIdx) item.classList.add('done');
+    });
+    const optsDiv = document.getElementById('options');
+    optsDiv.innerHTML = "";
+    q.opts.forEach((o, i) => {
+        const b = document.createElement('button');
+        b.className = 'btn-opt'; 
+        b.innerText = o;
+        b.onclick = () => check(i, b);
+        optsDiv.appendChild(b);
+    });
+}
+
+function check(idx, b) {
+    const q = quiz[cur];
+    const allButtons = document.querySelectorAll('.btn-opt');
+    allButtons.forEach(btn => btn.onclick = null);
+    if(idx === q.ans) {
+        score++; 
+        b.classList.add('correct');
+        sCor.play(); setTimeout(() => { vCor.play(); }, 250); 
+    } else {
+        b.classList.add('wrong');
+        allButtons[q.ans].classList.add('correct'); 
+        sErr.play(); setTimeout(() => { vErr.play(); }, 250);
+    }
+    document.getElementById('feedback').innerText = "💡 تأكيد: " + q.fb;
+    document.getElementById('feedback').style.display = 'block';
+    document.getElementById('s-val').innerText = "النقاط: " + score;
+    setTimeout(() => { cur++; if(cur < quiz.length) loadQ(); else finish(); }, 3500);
+}
+
+function finish() {
+    const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const percentage = (score / quiz.length) * 100;
+    let feedbackMsg = "", feedbackColor = "#1e3a8a";
+    if (percentage >= 90) feedbackMsg = "أداء أسطوري! أنت خبير في جغرافيا آسيا وأوروبا ⚡🏆";
+    else if (percentage >= 75) feedbackMsg = "ممتاز جداً يا بطل! استيعابك للموقع والتضاريس رائع 🌟";
+    else if (percentage >= 50) feedbackMsg = "أداء جيد، أنصحك بمراجعة الخرائط والسهول لرفع درجتك 💪";
+    else feedbackMsg = "لا بأس، راجع بنك الأسئلة جيداً وحاول مرة أخرى! 🚩";
+
+    document.getElementById('stagesNav').style.display = 'none';
+    document.getElementById('scr-2').classList.remove('active-screen');
+    document.getElementById('scr-3').classList.add('active-screen');
+    document.getElementById('fName').innerText = uName;
+    document.getElementById('fScore').innerText = score + " / " + quiz.length;
+    document.getElementById('motivationMsg').innerHTML = `<div style="color:${feedbackColor}; margin:15px 0; font-size:22px; border:3px solid ${feedbackColor}; padding:15px; border-radius:15px; font-weight:bold;">${feedbackMsg}</div>`;
+    
+    const lessonName = "موقع ومظاهر سطح قارتي آسيا وأوروبا";
+    const finalUrl = SCRIPT_URL + "?name=" + encodeURIComponent(uName) + "&score=" + encodeURIComponent(score) + "&duration=" + encodeURIComponent(durationSeconds) + "&lesson=" + encodeURIComponent(lessonName);
+    const sender = new Image();
+    sender.src = finalUrl;
+    sender.onload = sender.onerror = () => document.getElementById('sendingMsg').innerText = "✅ تم حفظ نتيجتك بنجاح في لوحة شرف أ. سعيد شعبان!";
+}
+</script>
+</body>
+</html>
